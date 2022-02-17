@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/errors"
+	"github.com/syndtr/goleveldb/leveldb/iterator"
+	"github.com/syndtr/goleveldb/leveldb/util"
 )
 
 type LevelDB struct {
@@ -109,3 +111,12 @@ func (level *LevelDB) Delete(key string) error {
 	}
 	return db.Delete([]byte(key), nil)
 }
+
+// GetIterator 获取迭代器
+func (level *LevelDB) GetIterator(start string, limit string) iterator.Iterator {
+	if start != "" && limit != "" {
+		return level.db.NewIterator(&util.Range{Start: []byte(start), Limit: []byte(limit)}, nil)
+	}
+	return level.db.NewIterator(nil, nil)
+}
+
