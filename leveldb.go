@@ -113,10 +113,13 @@ func (level *LevelDB) Delete(key string) error {
 }
 
 // GetIterator 获取迭代器
-func (level *LevelDB) GetIterator(start string, limit string) iterator.Iterator {
-	if start != "" && limit != "" {
-		return level.db.NewIterator(&util.Range{Start: []byte(start), Limit: []byte(limit)}, nil)
+func (level *LevelDB) GetIterator(start string, limit string) (iterator.Iterator, error) {
+	db, err := level.GetDB()
+	if err != nil {
+		return nil, err
 	}
-	return level.db.NewIterator(nil, nil)
+	if start != "" && limit != "" {
+		return db.NewIterator(&util.Range{Start: []byte(start), Limit: []byte(limit)}, nil), nil
+	}
+	return db.NewIterator(nil, nil), nil
 }
-
